@@ -6,14 +6,17 @@ import com.pengrad.telegrambot.model.Update;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
 import pro.sky.telegrambot.model.NotificationTask;
 import pro.sky.telegrambot.repository.NotificationTaskRepository;
 import pro.sky.telegrambot.service.TelegramBotSender;
 
 import javax.annotation.PostConstruct;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -58,10 +61,10 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
                 Matcher matcher = INCOMING_MESSAGE_PATTERN.matcher(message);
                 if(matcher.matches()) {
                     logger.info("Приняло новое сообщение: " + message);
-//
+
                     String rawDateTime = matcher.group(1);
                     String notificationText = matcher.group(3);
-//
+
                     NotificationTask notificationTask = new NotificationTask(
                             chatId,
                             notificationText,
