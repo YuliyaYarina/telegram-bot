@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import pro.sky.telegrambot.exception.NullException;
 import pro.sky.telegrambot.model.NotificationTask;
 import pro.sky.telegrambot.repository.NotificationTaskRepository;
 import pro.sky.telegrambot.service.TelegramBotSender;
@@ -51,31 +52,48 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
         updates.forEach(update -> {
             logger.info("Processing update: {}", update);
 
-            String message = update.message().text();
-            Long chatId = update.message().chat().id();
+//            String message = update.message().text();
+//            Long chatId = update.message().chat().id();
 
-            if (message.equals("/start")) {
-                logger.info("Получили сообщение: " + message);
-                telegramBotSender.send(chatId, WELCOME_MESSAGE);
-            } else {
-                Matcher matcher = INCOMING_MESSAGE_PATTERN.matcher(message);
-                if(matcher.matches()) {
-                    logger.info("Приняло новое сообщение: " + message);
+//            Update update = ... ; // получение объекта Update
+            try {
+                if (update.message() != null) {
+                    String message = update.message().text();
+                    Long chatId = update.message().chat().id();
 
-                    String rawDateTime = matcher.group(1);
-                    String notificationText = matcher.group(3);
+                    if (message.equals("/start")) {
+                        logger.info("Получили сообщение: " + message);
+                        telegramBotSender.send(chatId, WELCOME_MESSAGE);
+                    } else {
+                        Matcher matcher = INCOMING_MESSAGE_PATTERN.matcher(message);
+                        if (matcher.matches()) {
+                            logger.info("Приняло новое сообщение: " + message);
 
-                    NotificationTask notificationTask = new NotificationTask(
-                            chatId,
-                            notificationText,
-                            LocalDateTime.parse(rawDateTime, NOTIfiCATION_DATE_TIME_FORMAT)
-                    );
-                    notificationTaskRepository.save(notificationTask);
+                            String rawDateTime = matcher.group(1);
+                            String notificationText = matcher.group(3);
 
-                    telegramBotSender.send(chatId, SUCCESSFULLY_SAVED_RESPONSE);
-                }
+                            NotificationTask notificationTask = new NotificationTask(
+                                    chatId,
+                                    notificationText,
+                                    LocalDateTime.parse(rawDateTime, NOTIfiCATION_DATE_TIME_FORMAT)
+                            );
+                            notificationTaskRepository.save(notificationTask);
+
+                            telegramBotSender.send(chatId, SUCCESSFULLY_SAVED_RESPONSE);
+                        }
+                        throw new NullException("Я пока не научился это понимать!1!");
+                    }
+//                    } else {
+//                        if (update.message() == null) {
+//                            return new RuntimeException(WELCOME_MESSAGE);
+//                        }
+                    }
+            } catch (NullException e) {
+                if (e.getMessage() != null) {
+                    System.out.println("Ошибка: " + e.getMessage());
+                }else {
+                System.out.println("Я пока не научился это понимать!2!");}
             }
-
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
