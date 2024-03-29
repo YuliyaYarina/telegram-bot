@@ -85,7 +85,7 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 //                    } else if (update.message() == null) {
 //                            throw new NullException();
 //                    }
-//            } catch (NullException e) {           // это я пробовала чтобы решить проблему, не ромогло
+//            } catch (NullException e) {           // это я пробовала чтобы решить проблему, не помогло
 //                if (e.getMessage() != null) {
 //                    System.out.println("Ошибка: " + e.getMessage());
 //                }else {
