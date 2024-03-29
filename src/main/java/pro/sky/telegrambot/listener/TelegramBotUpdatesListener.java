@@ -55,7 +55,6 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 //            String message = update.message().text();
 //            Long chatId = update.message().chat().id();
 
-//            Update update = ... ; // получение объекта Update
             try {
                 if (update.message() != null) {
                     String message = update.message().text();
@@ -81,21 +80,21 @@ public class TelegramBotUpdatesListener implements UpdatesListener {
 
                             telegramBotSender.send(chatId, SUCCESSFULLY_SAVED_RESPONSE);
                         }
-                        throw new NullException("Я пока не научился это понимать!1!");
+                        throw new NullException();
                     }
-//                    } else {
-//                        if (update.message() == null) {
-//                            return new RuntimeException(WELCOME_MESSAGE);
-//                        }
-                    }
+//                    } else if (update.message() == null) {
+//                            throw new NullException();
+//                    }
+//            } catch (NullException e) {           // это я пробовала чтобы решить проблему, не ромогло
+//                if (e.getMessage() != null) {
+//                    System.out.println("Ошибка: " + e.getMessage());
+//                }else {
+//                System.out.println("Я пока не научился это понимать!2!");
+                }
             } catch (NullException e) {
-                if (e.getMessage() != null) {
-                    System.out.println("Ошибка: " + e.getMessage());
-                }else {
-                System.out.println("Я пока не научился это понимать!2!");}
+                throw new RuntimeException(e);
             }
         });
         return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
-
 }
